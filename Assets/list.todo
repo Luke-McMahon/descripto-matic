@@ -1,0 +1,12 @@
+
+## Current issues ##
+
+-- Cannot remove from lists
+	== This will require a newer system
+		However I think I can just rewrite the file with 
+		the current list of items.
+
+-- Can add an empty entry
+	== This should be an easy fix:
+		Just need to check the entry text not being null
+		addition != ""
