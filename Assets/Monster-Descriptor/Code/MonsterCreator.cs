@@ -22,8 +22,6 @@ public class MonsterCreator : MonoBehaviour
 
     private void Start()
     {
-        testText.text = Application.dataPath;
-
         if (!Lists)
         {
             Lists = FindObjectOfType<ListCreator>();

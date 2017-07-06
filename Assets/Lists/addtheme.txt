@@ -1,1 +1,1 @@
-military(officer),military(solider),butcher,nurse/medic,doctor,police officer,business suit attire,zombie,clown,construction worker,dmon,angel,nazi,robotic,knight
+military(officer),military(solider),butcher,nurse/medic,doctor,police officer,business suit attire,zombie,clown,construction worker,dmon,angel,nazi,robotic,knight,this is a new entry

@@ -45,8 +45,6 @@ public class ListCreator : MonoBehaviour
 
     private void Init()
     {
-        Debug.Log(Application.dataPath);
-
         ClearLists();
         DestroyListUI();
         for (int i = 0; i < content.Length; i++)
@@ -186,20 +184,27 @@ public class ListCreator : MonoBehaviour
         Init();
     }
     
+    // This is super bad and I need to clean it all up.
     public void AddTextButton(string filename)
     {
         GameObject btnGO = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
 
         GameObject textHolder = GetSibling(btnGO.transform.parent, btnGO.transform);
-        Text txt = FindPlaceholderObject(textHolder.transform.GetChild(0));
+        InputField field = FindInputFieldInChildren(textHolder.transform.GetChild(0));
+        Text displayTxt = textHolder.transform.GetChild(0).transform.Find("DisplayText").GetComponent<Text>();
+        displayTxt.text = "";
+        Text txt = FindTextInChilren(textHolder.transform.GetChild(0));
         AddText(txt.text, filename);
+        txt.text = "";
+        field.text = "";
+        displayTxt.text = "";
     }
 
-    private Text FindPlaceholderObject(Transform current)
+    private Text FindTextInChilren(Transform current)
     {
-        foreach(Transform child in current)
+        foreach (Transform child in current)
         {
-            if(child.name.Contains("InputText"))
+            if (child.name.Contains("InputText"))
             {
                 return child.GetComponent<Text>();
             }
@@ -207,6 +212,11 @@ public class ListCreator : MonoBehaviour
 
         Debug.LogError("Could not find InputText child");
         return null;
+    }
+
+    private InputField FindInputFieldInChildren(Transform current)
+    {
+        return current.GetComponent<InputField>();
     }
 
     private GameObject GetSibling(Transform parent, Transform current)
