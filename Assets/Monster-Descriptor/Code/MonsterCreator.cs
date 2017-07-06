@@ -27,18 +27,7 @@ public class MonsterCreator : MonoBehaviour
             {
                 Debug.LogError("ListCreator could not be found!");
             }
-        }
-
-        Debug.Log("Description: " + Lists.DescriptionStrings.Count);
-    }
-    
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("Description: " + Lists.DescriptionStrings.Count);
-            Lists.PrintDescriptionCount();
-        }
+        }        
     }
 
     public void GenerateMonster()

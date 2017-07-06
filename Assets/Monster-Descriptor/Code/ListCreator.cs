@@ -14,7 +14,7 @@ public class ListCreator : MonoBehaviour
         public Transform Parent;
         public string FileName;
     }
-
+    
     [SerializeField]
     private Content[] content;
 
@@ -36,27 +36,10 @@ public class ListCreator : MonoBehaviour
     public List<string> ThemeStrings { get { return themeStrings; } }
     public List<string> FlairStrings { get { return flairStrings; } }
 
-    public void PrintDescriptionCount()
-    {
-        Debug.Log("Creator::Description -- " + descriptionStrings.Count);
-    }
-
     private void Start () 
 	{
         for(int i = 0; i < content.Length; i++)
         {
-            Debug.Log("Index: " + i.ToString() + " -- " + content[i].FileName.ToString());
-
-            /*
-             
-             foreach (string s in strarr)
-             {
-                 GameObject textGO = Instantiate(textPrefab, this.transform);
-                 textGO.GetComponent<Text>().text = s;
-             }
-             
-             */
-
             Init(content[i], i);
         }
 	}
@@ -64,7 +47,7 @@ public class ListCreator : MonoBehaviour
     private void Init(Content currentContent, int contentIndex)
     {
         string listFileName = currentContent.FileName;
-        string fileContents = ReadFile(listFileName);
+        string fileContents = ReadFromFile(listFileName);
         List<string> temp = new List<string>();
 
         switch (contentIndex)
@@ -73,70 +56,39 @@ public class ListCreator : MonoBehaviour
                 temp = BreakTextByLine(fileContents);
                 PopulateList(bodyStrings, temp);
                 CreateListUI(bodyStrings, currentContent.Parent);
+                WriteToFile(currentContent.FileName, fileContents);
                 break;
 
             case 1: // description
                 temp = BreakTextByLine(fileContents);
                 PopulateList(descriptionStrings, temp);
                 CreateListUI(descriptionStrings, currentContent.Parent);
+                WriteToFile(currentContent.FileName, fileContents);
                 break;
 
             case 2: // thing
                 temp = BreakTextByLine(fileContents);
                 PopulateList(thingStrings, temp);
                 CreateListUI(thingStrings, currentContent.Parent);
+                WriteToFile(currentContent.FileName, fileContents);
                 break;
 
             case 3: // theme
                 temp = BreakTextByLine(fileContents);
                 PopulateList(themeStrings, temp);
                 CreateListUI(themeStrings, currentContent.Parent);
+                WriteToFile(currentContent.FileName, fileContents);
                 break;
 
             case 4: // flair
                 temp = BreakTextByLine(fileContents);
                 PopulateList(flairStrings, temp);
                 CreateListUI(flairStrings, currentContent.Parent);
+                WriteToFile(currentContent.FileName, fileContents);
                 break;
         }
     }
-
-    //private void Init()
-    //{
-    //    //string str = ReadFile(listFileName);
-    //    string str = "";
-    //    List<string> strarr = BreakTextByLine(str);
-
-
-    //    foreach (string s in strarr)
-    //    {
-    //        GameObject textGO = Instantiate(textPrefab, this.transform);
-    //        textGO.GetComponent<Text>().text = s;
-    //    }
-
-    //    if (listFileName.Contains("thing"))
-    //    {
-    //        PopulateList(thingStrings, strarr);
-    //    }
-    //    if (listFileName.Contains("flair"))
-    //    {
-    //        PopulateList(flairStrings, strarr);
-    //    }
-    //    if (listFileName.Contains("theme"))
-    //    {
-    //        PopulateList(themeStrings, strarr);
-    //    }
-    //    if (listFileName.Contains("body"))
-    //    {
-    //        PopulateList(bodyStrings, strarr);
-    //    }
-    //    if (listFileName.Contains("description"))
-    //    {
-    //        PopulateList(descriptionStrings, strarr);
-    //        Debug.Log(descriptionStrings.Count);
-    //    }
-    //}
-
+    
     private void CreateListUI(List<string> list, Transform parent)
     {
         foreach (string s in list)
@@ -166,4 +118,45 @@ public class ListCreator : MonoBehaviour
 
         return sb.ToString();
     }
+
+    private string ReadFromFile(string fileName)
+    {
+        string result = "";
+        string filePath = Application.dataPath + "/Lists/" + fileName + ".txt";
+
+        result = File.ReadAllText(filePath);
+
+        return result;
+    }
+
+    private List<string> BreakLines(string text)
+    {
+        return text.Split(',').ToList();
+    }
+
+    private void WriteToFile(string fileName, string contents)
+    {
+        string filePath = Application.dataPath + "/Lists/" + fileName + ".txt";
+        StreamWriter sw = File.CreateText(filePath);
+        sw.Write(contents);
+        sw.Close();
+    }
+
+    private void AppendToFile(string fileName, string addition)
+    {
+        string filePath = Application.dataPath + "/Lists/" + fileName + ".txt";
+        string current = ReadFromFile(fileName);
+        current += "," + addition;
+        StreamWriter sw = File.CreateText(filePath);
+        sw.Write(current);
+        sw.Close();
+    }
+    
+    public void AddText(Text input, string fileName)
+    {
+        string addition = input.text;
+        AppendToFile(fileName, addition);
+        
+    }
+    
 }
