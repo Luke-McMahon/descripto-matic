@@ -28,6 +28,8 @@ public class ListCreator : MonoBehaviour
     private List<string> thingStrings = new List<string>();
     private List<string> themeStrings = new List<string>();
     private List<string> flairStrings = new List<string>();
+
+    private List<GameObject> listItems = new List<GameObject>();
     #endregion
 
     public List<string> BodyStrings { get { return bodyStrings; } }
@@ -38,13 +40,31 @@ public class ListCreator : MonoBehaviour
 
     private void Start () 
 	{
-        for(int i = 0; i < content.Length; i++)
-        {
-            Init(content[i], i);
-        }
+        Init();
 	}
 
-    private void Init(Content currentContent, int contentIndex)
+    private void Init()
+    {
+        Debug.Log(Application.dataPath);
+
+        ClearLists();
+        DestroyListUI();
+        for (int i = 0; i < content.Length; i++)
+        {
+            StartDescriptor(content[i], i);
+        }
+    }
+
+    private void ClearLists()
+    {
+        bodyStrings.Clear();
+        descriptionStrings.Clear();
+        thingStrings.Clear();
+        themeStrings.Clear();
+        flairStrings.Clear();
+    }
+
+    private void StartDescriptor(Content currentContent, int contentIndex)
     {
         string listFileName = currentContent.FileName;
         string fileContents = ReadFromFile(listFileName);
@@ -95,7 +115,20 @@ public class ListCreator : MonoBehaviour
         {
             GameObject textGO = Instantiate(textPrefab, parent);
             textGO.GetComponent<Text>().text = s;
+            listItems.Add(textGO);
         }
+    }
+
+    private void DestroyListUI()
+    {
+        if (listItems.Count <= 0)
+            return;
+
+        foreach (GameObject go in listItems)
+        {
+            Destroy(go);
+        }
+        listItems = new List<GameObject>();
     }
 
     private void PopulateList(List<string> a, List<string> b)
@@ -150,13 +183,47 @@ public class ListCreator : MonoBehaviour
         StreamWriter sw = File.CreateText(filePath);
         sw.Write(current);
         sw.Close();
+        Init();
     }
     
-    public void AddText(Text input, string fileName)
+    public void AddTextButton(string filename)
     {
-        string addition = input.text;
-        AppendToFile(fileName, addition);
-        
+        GameObject btnGO = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
+
+        GameObject textHolder = GetSibling(btnGO.transform.parent, btnGO.transform);
+        Text txt = FindPlaceholderObject(textHolder.transform.GetChild(0));
+        AddText(txt.text, filename);
+    }
+
+    private Text FindPlaceholderObject(Transform current)
+    {
+        foreach(Transform child in current)
+        {
+            if(child.name.Contains("InputText"))
+            {
+                return child.GetComponent<Text>();
+            }
+        }
+
+        Debug.LogError("Could not find InputText child");
+        return null;
+    }
+
+    private GameObject GetSibling(Transform parent, Transform current)
+    {
+        foreach (Transform child in parent)
+        {
+            if(child.name != current.name)
+            {
+                return child.gameObject;
+            }
+        }
+        return null;
+    }
+
+    private void AddText(string input, string fileName)
+    {
+        AppendToFile(fileName, input);
     }
     
 }

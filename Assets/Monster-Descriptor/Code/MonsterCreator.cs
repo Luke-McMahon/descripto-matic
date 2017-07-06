@@ -17,9 +17,13 @@ public class MonsterCreator : MonoBehaviour
     private Text genFlairLabel;
     [SerializeField]
     private Text genThemeLabel;
+    [SerializeField]
+    private Text testText;
 
     private void Start()
     {
+        testText.text = Application.dataPath;
+
         if (!Lists)
         {
             Lists = FindObjectOfType<ListCreator>();
