@@ -11,48 +11,62 @@ public class ListCreator : MonoBehaviour
     [System.Serializable]
     public struct Content
     {
+		// Transform to parent the created gameobject to
         public Transform Parent;
+		// File name to grab the text from
         public string FileName;
     }
     
     [SerializeField]
-    private Content[] content;
+    private Content[] content; // A array of custom structs to hold the parent transform and the file name 
 
     [SerializeField]
-    private GameObject textPrefab;
+    private GameObject textPrefab; // GameObject to create for the text item
 
 
     #region Individual Lists
+	// Lists to hold all of the data from the .txt files
     private List<string> bodyStrings = new List<string>();
     private List<string> descriptionStrings = new List<string>();
     private List<string> thingStrings = new List<string>();
     private List<string> themeStrings = new List<string>();
     private List<string> flairStrings = new List<string>();
 
+	// List of GameObjects to hold the actual object we create
     private List<GameObject> listItems = new List<GameObject>();
     #endregion
 
+	#region List Getters
     public List<string> BodyStrings { get { return bodyStrings; } }
     public List<string> DescriptionStrings { get { return descriptionStrings; } }
     public List<string> ThingStrings { get { return thingStrings; } }
     public List<string> ThemeStrings { get { return themeStrings; } }
     public List<string> FlairStrings { get { return flairStrings; } }
+	#endregion
 
     private void Start () 
 	{
+		// Initialize the program
         Init();
 	}
 
     private void Init()
     {
+		// Clear lists
         ClearLists();
-        DestroyListUI();
+		
+		// Destroy all UI list items
+		DestroyListUI();
+		
+	    // for each content we have
         for (int i = 0; i < content.Length; i++)
         {
+			// Begin the population of the lists
             StartDescriptor(content[i], i);
         }
     }
 
+	// Clear our lists of all data
     private void ClearLists()
     {
         bodyStrings.Clear();
@@ -62,6 +76,7 @@ public class ListCreator : MonoBehaviour
         flairStrings.Clear();
     }
 
+	// Based on the index, populate the correct list
     private void StartDescriptor(Content currentContent, int contentIndex)
     {
         string listFileName = currentContent.FileName;
@@ -107,6 +122,7 @@ public class ListCreator : MonoBehaviour
         }
     }
     
+	// Create Listitem
     private void CreateListUI(List<string> list, Transform parent)
     {
         foreach (string s in list)
@@ -117,6 +133,7 @@ public class ListCreator : MonoBehaviour
         }
     }
 
+	// Destroy listitems
     private void DestroyListUI()
     {
         if (listItems.Count <= 0)
@@ -129,17 +146,19 @@ public class ListCreator : MonoBehaviour
         listItems = new List<GameObject>();
     }
 
+	// Populates list a with everything in list b
     private void PopulateList(List<string> a, List<string> b)
     {
         a.AddRange(b);
     }
 
+	// Splits text by comma and returns result as a list
     private List<string> BreakTextByLine(string text)
     {
         string[] result = text.Split(',');
         return result.ToList();
     }
-
+ 
     private string ReadFile(string listFileName)
     {
         StringBuilder sb = new StringBuilder();
